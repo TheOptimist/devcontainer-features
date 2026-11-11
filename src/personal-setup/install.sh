@@ -22,18 +22,26 @@ case "$ID" in
     ;;
 esac
 
-default_shell=$(cat /etc/passwd | grep "^$(whoami)" | rev | cut -d/ -f1 | rev)
-echo "Initialising $default_shell shell for $(whoami)"
+remote_user="$(awk -v val=1000 -F ":" '$3==val{print $1}' /etc/passwd)"
 
-case "$default_shell" in
-  bash)
-    echo 'eval "$(starship init bash)"' >> $HOME/.bashrc
-    ;;
-  pwsh)
-    mkdir ~/.config/powershell
-    echo "Invoke-Expression (&starship init powershell)" >> $HOME/.config/powershell/profile.ps1
-    ;;
-  *)
-    echo "Cannot setup shell: $target_shell"
-    ;;
-esac
+all_users=("root" "$remote_user")
+
+for current_user in "${all_users[@]}"; do
+  user_home=$(cat /etc/passwd | grep "^$current_user" | cut -d: -f6)
+  user_shell=$(cat /etc/passwd | grep "^$current_user" | rev | cut -d/ -f1 | rev)
+
+  echo "Initializing $user_shell shell for $current_user"
+
+  case "$user_shell" in
+    bash)
+      echo 'eval "$(starship init bash)"' >> "$user_home/.bashrc"
+      ;;
+    pwsh)
+      mkdir -p "$user_home/.config/powershell"
+      echo "Invoke-Expression (&starship init powershell)" >> "$user_home/.config/powershell/profile.ps1"
+      ;;
+    *)
+      echo "Cannot setup shell: $user_shell"
+      ;;
+  esac
+done
