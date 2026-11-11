@@ -23,27 +23,22 @@ case "$ID" in
 esac
 
 remote_user="$(awk -v val=1000 -F ":" '$3==val{print $1}' /etc/passwd)"
+current_user="${remote_user:-root}"
 
-cat /etc/passwd
+user_home=$(cat /etc/passwd | grep "^$current_user" | cut -d: -f6)
+user_shell=$(cat /etc/passwd | grep "^$current_user" | rev | cut -d/ -f1 | rev)
 
-all_users=("root" "$remote_user")
+echo "Initializing $user_shell shell for $current_user"
 
-for current_user in "${all_users[@]}"; do
-  user_home=$(cat /etc/passwd | grep "^$current_user" | cut -d: -f6)
-  user_shell=$(cat /etc/passwd | grep "^$current_user" | rev | cut -d/ -f1 | rev)
-
-  echo "Initializing $user_shell shell for $current_user"
-
-  case "$user_shell" in
-    bash)
-      echo 'eval "$(starship init bash)"' >> "$user_home/.bashrc"
-      ;;
-    pwsh)
-      mkdir -p "$user_home/.config/powershell"
-      echo "Invoke-Expression (&starship init powershell)" >> "$user_home/.config/powershell/profile.ps1"
-      ;;
-    *)
-      echo "Cannot setup shell: $user_shell"
-      ;;
-  esac
-done
+case "$user_shell" in
+  bash)
+    echo 'eval "$(starship init bash)"' >> "$user_home/.bashrc"
+    ;;
+  pwsh)
+    mkdir -p "$user_home/.config/powershell"
+    echo "Invoke-Expression (&starship init powershell)" >> "$user_home/.config/powershell/profile.ps1"
+    ;;
+  *)
+    echo "Cannot setup shell: $user_shell"
+    ;;
+esac
