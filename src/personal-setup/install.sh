@@ -14,7 +14,7 @@ case "$ID" in
     echo "Installing starship"
     apt-get update --yes
     apt-get install --yes --no-install-recommends curl
-    curl -sS https://starship.rs/install.sh | sh -s -- --yes
+    curl -sS https://starship.rs/install.sh | sh -s -- --skip-shell --yes
     ;;
   *)
     echo "Error: Unsupported distribution: $ID"
