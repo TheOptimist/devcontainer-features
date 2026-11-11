@@ -21,7 +21,7 @@ case "$ID" in
     ;;
 esac
 
-default_shell=$(cat /etc/passwd | grep $(whoami) | rev | cut -d/ -f1 | rev)
+default_shell=$(cat /etc/passwd | grep "^$(whoami)" | rev | cut -d/ -f1 | rev)
 
 case "$default_shell" in
   bash)
