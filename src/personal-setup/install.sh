@@ -13,7 +13,7 @@ case "$ID" in
   debian|ubuntu)
     echo "Installing starship"
     apt-get update --yes
-    apt-get install --yes --no-install-recommends curl ca-certificates
+    apt-get install --yes --no-install-recommends curl
     curl -sS https://starship.rs/install.sh | sh -s -- --yes
     ;;
   *)
@@ -24,13 +24,14 @@ esac
 
 default_shell=$(cat /etc/passwd | grep "^$(whoami)" | rev | cut -d/ -f1 | rev)
 echo "Initialising $default_shell shell"
+
 case "$default_shell" in
   bash)
-    echo 'eval "$(starship init bash)"' >> ~/.bashrc
+    echo 'eval "$(starship init bash)"' >> $HOME/.bashrc
     ;;
   pwsh)
     mkdir ~/.config/powershell
-    echo "Invoke-Expression (&starship init powershell)" >> ~/.config/powershell/profile.ps1
+    echo "Invoke-Expression (&starship init powershell)" >> $HOME/.config/powershell/profile.ps1
     ;;
   *)
     echo "Cannot setup shell: $target_shell"
