@@ -24,6 +24,8 @@ esac
 
 remote_user="$(awk -v val=1000 -F ":" '$3==val{print $1}' /etc/passwd)"
 
+cat /etc/passwd
+
 all_users=("root" "$remote_user")
 
 for current_user in "${all_users[@]}"; do
