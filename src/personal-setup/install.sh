@@ -11,6 +11,7 @@ fi
 echo "Installing packages for distribution: $ID"
 case "$ID" in
   debian|ubuntu)
+    echo "Installing starship"
     apt-get update --yes
     apt-get install --yes --no-install-recommends curl ca-certificates
     curl -sS https://starship.rs/install.sh | sh -s -- --yes
@@ -22,7 +23,7 @@ case "$ID" in
 esac
 
 default_shell=$(cat /etc/passwd | grep "^$(whoami)" | rev | cut -d/ -f1 | rev)
-
+echo "Initialising $default_shell shell"
 case "$default_shell" in
   bash)
     echo 'eval "$(starship init bash)"' >> ~/.bashrc
